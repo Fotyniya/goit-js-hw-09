@@ -12,8 +12,9 @@ const timerSeconds = document.querySelector('[data-seconds]');
 btnStart.setAttribute('disabled', 'disabled');
 btnStart.addEventListener('click', () => {
     timeInterval = setInterval(() => {
-        onStartCountdown();
+        onCountdown();
     }, 1000);
+    
   });
 
 const options = {
@@ -28,26 +29,27 @@ const options = {
 
 flatpickr("#datetime-picker", {options});
 
-inputTime.addEventListener('input', () => {
-    if (Date.parse(inputTime.value) < Date.parse(options.defaultDate)){
+inputTime.addEventListener('change', onReadyCountdown)
+
+function onReadyCountdown() {
+    if (Date.parse(inputTime.value) <= Date.parse(options.defaultDate)){
         Notify.warning(" Please choose a date in the future");
     } else {
-        const timerId = setTimeout(Notify.success('We can start the countdown. Click START'), 0);
-        clearTimeout(timerId);
+        Notify.success('You can start the countdown. Click START')
         btnStart.removeAttribute('disabled');
-    }
-})
+    } 
+};
 
-function onStartCountdown () {
-    
-    const currentDate = new Date();
-    const choosenDate = new Date(inputTime.value) 
-    const ms = Date.parse(choosenDate) - Date.parse(currentDate);
-   
-    timerDays.textContent = addLeadingZero(convertMs(ms).days);
-    timerHours.textContent = addLeadingZero(convertMs(ms).hours);
-    timerMinutes.textContent = addLeadingZero(convertMs(ms).minutes);
-    timerSeconds.textContent = addLeadingZero(convertMs(ms).seconds);
+function onCountdown () {
+        const currentDate = new Date();
+        const choosenDate = new Date(inputTime.value) 
+        const ms = Date.parse(choosenDate) - Date.parse(currentDate);
+    if (ms >= 0){
+        timerDays.textContent = addLeadingZero(convertMs(ms).days);
+        timerHours.textContent = addLeadingZero(convertMs(ms).hours);
+        timerMinutes.textContent = addLeadingZero(convertMs(ms).minutes);
+        timerSeconds.textContent = addLeadingZero(convertMs(ms).seconds);
+    } 
 };
 
 function convertMs(ms) {
