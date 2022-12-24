@@ -20,8 +20,12 @@ const options = {
 };
 
 btnStart.setAttribute('disabled', 'disabled');
-
-let calendar = flatpickr("#datetime-picker", {options});
+btnStart.addEventListener('click', () => {
+    const timeInterval = setInterval(() => {
+        onCountdown();
+    }, 1000);
+});
+flatpickr("#datetime-picker", {options});
 
 inputTime.addEventListener('input', onReadyCountdown)
 
@@ -33,15 +37,9 @@ function onReadyCountdown() {
         timerHours.textContent = addLeadingZero(0);
         timerMinutes.textContent = addLeadingZero(0);
         timerSeconds.textContent = addLeadingZero(0);
-        //calendar.clear()
     } else {
         Notify.success('You can start the countdown. Click START')
         btnStart.removeAttribute('disabled');
-        btnStart.addEventListener('click', () => {
-            const timeInterval = setInterval(() => {
-                onCountdown();
-            }, 1000);
-        });
     } 
 };
 
