@@ -9,14 +9,6 @@ const timerHours = document.querySelector('[data-hours]');
 const timerMinutes = document.querySelector('[data-minutes]');
 const timerSeconds = document.querySelector('[data-seconds]');
 
-btnStart.setAttribute('disabled', 'disabled');
-btnStart.addEventListener('click', () => {
-    timeInterval = setInterval(() => {
-        onCountdown();
-    }, 1000);
-    
-  });
-
 const options = {
     enableTime: true,
     time_24hr: true,
@@ -25,18 +17,31 @@ const options = {
     onClose(selectedDates) {
       console.log(selectedDates[0]);
     },
-  };
+};
 
-flatpickr("#datetime-picker", {options});
+btnStart.setAttribute('disabled', 'disabled');
 
-inputTime.addEventListener('change', onReadyCountdown)
+let calendar = flatpickr("#datetime-picker", {options});
+
+inputTime.addEventListener('input', onReadyCountdown)
 
 function onReadyCountdown() {
-    if (Date.parse(inputTime.value) <= Date.parse(options.defaultDate)){
+    if (Date.parse(inputTime.value) <= Date.now()){
+        btnStart.setAttribute('disabled', 'disabled');
         Notify.warning(" Please choose a date in the future");
+        timerDays.textContent = addLeadingZero(0);
+        timerHours.textContent = addLeadingZero(0);
+        timerMinutes.textContent = addLeadingZero(0);
+        timerSeconds.textContent = addLeadingZero(0);
+        //calendar.clear()
     } else {
         Notify.success('You can start the countdown. Click START')
         btnStart.removeAttribute('disabled');
+        btnStart.addEventListener('click', () => {
+            const timeInterval = setInterval(() => {
+                onCountdown();
+            }, 1000);
+        });
     } 
 };
 
