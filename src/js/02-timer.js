@@ -18,25 +18,30 @@ const options = {
       console.log(selectedDates[0]);
     },
 };
+let timeInterval;
 
 btnStart.setAttribute('disabled', 'disabled');
+
 btnStart.addEventListener('click', () => {
-    const timeInterval = setInterval(() => {
+    btnStart.setAttribute('disabled', 'disabled');
+    timeInterval = setInterval(() => {
         onCountdown();
     }, 1000);
 });
-flatpickr("#datetime-picker", {options});
 
-inputTime.addEventListener('input', onReadyCountdown)
+const calendar = flatpickr("#datetime-picker", {options});
+
+inputTime.addEventListener('change', onReadyCountdown)
 
 function onReadyCountdown() {
     if (Date.parse(inputTime.value) <= Date.now()){
         btnStart.setAttribute('disabled', 'disabled');
-        Notify.warning(" Please choose a date in the future");
+        Notify.warning("Please choose a date in the future");
         timerDays.textContent = addLeadingZero(0);
         timerHours.textContent = addLeadingZero(0);
         timerMinutes.textContent = addLeadingZero(0);
         timerSeconds.textContent = addLeadingZero(0);
+        clearInterval(timeInterval);
     } else {
         Notify.success('You can start the countdown. Click START')
         btnStart.removeAttribute('disabled');
@@ -74,8 +79,8 @@ function convertMs(ms) {
     return { days, hours, minutes, seconds };
 };
 
-function addLeadingZero(value) {
-    const valueAddZero = value.toString().padStart(2, 0);
+function addLeadingZero(data) {
+    const valueAddZero = data.toString().padStart(2, 0);
     return valueAddZero;
 };
   
