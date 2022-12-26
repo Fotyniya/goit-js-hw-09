@@ -11,12 +11,16 @@ btnStartChangeColor.addEventListener('click', () => {
     timeInterval = setInterval(() => {
         body.style.backgroundColor = getRandomHexColor();
     }, 1000);
-    btnStartChangeColor.setAttribute("disabled", "disabled");
-    btnStopChangeColor.removeAttribute("disabled", "disabled");
+    onReplaceAttribute (btnStartChangeColor, btnStopChangeColor, "disabled");
   });
   
 btnStopChangeColor.addEventListener('click', () => {
     clearInterval(timeInterval);
-    btnStartChangeColor.removeAttribute("disabled", "disabled");
-    btnStopChangeColor.setAttribute("disabled", "disabled");
+    onReplaceAttribute (btnStopChangeColor, btnStartChangeColor, "disabled");
 });
+
+function onReplaceAttribute (elemSetAtt, elemRemoveAtt, attName) {
+  elemSetAtt.setAttribute(attName, attName)
+  elemRemoveAtt.removeAttribute(attName)
+}
+    

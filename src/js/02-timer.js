@@ -2,12 +2,14 @@ import flatpickr from "flatpickr";
 import "flatpickr/dist/flatpickr.min.css";
 import { Notify } from 'notiflix/build/notiflix-notify-aio';
 
-const inputTime = document.querySelector("#datetime-picker");
-const btnStart = document.querySelector('[data-start]');
-const timerDays = document.querySelector('[data-days]');
-const timerHours = document.querySelector('[data-hours]');
-const timerMinutes = document.querySelector('[data-minutes]');
-const timerSeconds = document.querySelector('[data-seconds]');
+const refs = {
+    inputTime: document.querySelector("#datetime-picker"),
+    btnStart: document.querySelector('[data-start]'),
+    timerDays: document.querySelector('[data-days]'),
+    timerHours: document.querySelector('[data-hours]'),
+    timerMinutes: document.querySelector('[data-minutes]'),
+    timerSeconds: document.querySelector('[data-seconds]'),
+}
 
 const options = {
     enableTime: true,
@@ -18,45 +20,41 @@ const options = {
       console.log(selectedDates[0]);
     },
 };
+
 let timeInterval;
 
-btnStart.setAttribute('disabled', 'disabled');
+refs.btnStart.setAttribute('disabled', 'disabled');
 
-btnStart.addEventListener('click', () => {
-    btnStart.setAttribute('disabled', 'disabled');
+refs.btnStart.addEventListener('click', () => {
+    refs.btnStart.setAttribute('disabled', 'disabled');
     timeInterval = setInterval(() => {
         onCountdown();
     }, 1000);
 });
 
-const calendar = flatpickr("#datetime-picker", {options});
+flatpickr("#datetime-picker", options);
 
-inputTime.addEventListener('change', onReadyCountdown)
+refs.inputTime.addEventListener('change', onReadyCountdown)
 
 function onReadyCountdown() {
-    if (Date.parse(inputTime.value) <= Date.now()){
-        btnStart.setAttribute('disabled', 'disabled');
+    if (Date.parse(refs.inputTime.value) <= Date.now()){
+        refs.btnStart.setAttribute('disabled', 'disabled');
+        
         Notify.warning("Please choose a date in the future");
-        timerDays.textContent = addLeadingZero(0);
-        timerHours.textContent = addLeadingZero(0);
-        timerMinutes.textContent = addLeadingZero(0);
-        timerSeconds.textContent = addLeadingZero(0);
+        updateTimerFields({days: 0, hours: 0, minutes: 0, seconds: 0})
         clearInterval(timeInterval);
     } else {
         Notify.success('You can start the countdown. Click START')
-        btnStart.removeAttribute('disabled');
+        refs.btnStart.removeAttribute('disabled');
     } 
 };
 
 function onCountdown () {
         const currentDate = new Date();
-        const choosenDate = new Date(inputTime.value) 
+        const choosenDate = new Date(refs.inputTime.value) 
         const ms = Date.parse(choosenDate) - Date.parse(currentDate);
     if (ms >= 0){
-        timerDays.textContent = addLeadingZero(convertMs(ms).days);
-        timerHours.textContent = addLeadingZero(convertMs(ms).hours);
-        timerMinutes.textContent = addLeadingZero(convertMs(ms).minutes);
-        timerSeconds.textContent = addLeadingZero(convertMs(ms).seconds);
+        updateTimerFields(convertMs(ms))
     } 
 };
 
@@ -80,7 +78,12 @@ function convertMs(ms) {
 };
 
 function addLeadingZero(data) {
-    const valueAddZero = data.toString().padStart(2, 0);
-    return valueAddZero;
+    return data.toString().padStart(2, 0);
 };
-  
+
+function updateTimerFields(param) {
+    refs.timerDays.textContent = addLeadingZero(param.days);
+    refs.timerHours.textContent = addLeadingZero(param.hours);
+    refs.timerMinutes.textContent = addLeadingZero(param.minutes);
+    refs.timerSeconds.textContent = addLeadingZero(param.seconds);
+}
